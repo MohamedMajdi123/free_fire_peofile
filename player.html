@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Fire Player Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'ff-primary': '#ff5722',
+                        'ff-secondary': '#ffab00',
+                        'ff-dark': '#1a1a2e',
+                        'ff-light': '#e7e7de',
+                    },
+                    fontFamily: {
+                        'cairo': ['Cairo', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'hero-pattern': "url('data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff5722' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')",
+                    },
+                }
+            }
+        }
+
+        // Set dark mode based on user preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+    </script>
+    <style>
+        /* Custom Styles */
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .shine-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .shine-effect:after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right, 
+                rgba(255, 255, 255, 0) 0%, 
+                rgba(255, 255, 255, 0.3) 50%, 
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(30deg);
+            animation: shine 4s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) rotate(30deg); }
+        }
+        
+        .fire-bg {
+            background-image: radial-gradient(circle at center, rgba(255, 87, 34, 0.2) 0%, transparent 70%);
+        }
+        
+        .bounce-animation {
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .alert-success {
+            transform: translateY(-100%);
+            animation: slide-down 0.3s forwards, slide-up 0.3s 2s forwards;
+        }
+        
+        @keyframes slide-down {
+            to { transform: translateY(0); }
+        }
+        
+        @keyframes slide-up {
+            to { transform: translateY(-100%); }
+        }
+        
+        .ff-gradient {
+            background: linear-gradient(90deg, #ff5722, #ffab00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .weapon-card:hover .weapon-details {
+            transform: translateY(0);
+        }
+        
+        .weapon-details {
+            transform: translateY(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .skin-card:hover .skin-card-img {
+            transform: scale(1.05);
+        }
+        
+        .skin-card-img {
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        /* Floating animation */
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1a1a2e;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #ff5722;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ffab00;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-ff-dark text-gray-800 dark:text-gray-200 min-h-screen bg-hero-pattern">
+    <!-- Copy Alert -->
+    <div id="copyAlert" class="fixed top-0 left-0 right-0 bg-green-500 text-white text-center py-2 z-50 hidden">
+        تم نسخ الرمز بنجاح!
+    </div>
+
+    <!-- Header -->
+    <header class="sticky top-0 bg-white dark:bg-gray-900 shadow-md z-40">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-3">
+                <!-- Logo -->
+                <a href="#" class="flex items-center">
+                    <div class="relative h-12 w-32 overflow-hidden shine-effect">
+                        <div class="absolute inset-0 flex items-center">
+                            <span class="text-xl font-extrabold ff-gradient">FREE FIRE</span>
+                        </div>
+                        <svg class="h-10 w-10 text-ff-primary absolute left-0 opacity-30" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12.9 6.858l4.242 4.243L7.242 21H3v-4.243l9.9-9.9zm1.414-1.414l2.121-2.122a1 1 0 0 1 1.414 0l2.829 2.829a1 1 0 0 1 0 1.414l-2.122 2.121-4.242-4.242z"/>
+                        </svg>
+                    </div>
+                </a>
+                
+                <!-- Navigation -->
+                <nav class="hidden md:flex items-center space-x-6 space-x-reverse">
+                    <a href="#home" class="text-gray-800 dark:text-gray-200 hover:text-ff-primary dark:hover:text-ff-primary transition-colors py-1">الرئيسية</a>
+                    <a href="#skins" class="text-gray-800 dark:text-gray-200 hover:text-ff-primary dark:hover:text-ff-primary transition-colors py-1">سكنات</a>
+                    <a href="#weapons" class="text-gray-800 dark:text-gray-200 hover:text-ff-primary dark:hover:text-ff-primary transition-colors py-1">أسلحة</a>
+                    <a href="#stats" class="text-gray-800 dark:text-gray-200 hover:text-ff-primary dark:hover:text-ff-primary transition-colors py-1">إحصائيات</a>
+                </nav>
+                
+                <!-- Mobile Menu Button -->
+                <button id="menuBtn" class="md:hidden p-2 focus:outline-none">
+                    <svg class="h-6 w-6 text-gray-800 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path id="menuIcon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        <path id="closeIcon" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="md:hidden hidden pb-4 animate-fade-in">
+                <nav class="flex flex-col space-y-3">
+                    <a href="#home" class="text-gray-800 dark:text-gray-200 hover:text-ff-primary dark:hover:text-ff-primary transition-colors py-1">الرئيسية</a>
+                    <a href="#skins" class="text-gray-800 dark:text-gray-200 hover:text-ff-primary dark:hover:text-ff-primary transition-colors py-1">سكنات</a>
+                    <a href="#weapons" class="text-gray-800 dark:text-gray-200 hover:text-ff-primary dark:hover:text-ff-primary transition-colors py-1">أسلحة</a>
+                    <a href="#stats" class="text-gray-800 dark:text-gray-200 hover:text-ff-primary dark:hover:text-ff-primary transition-colors py-1">إحصائيات</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Landing - Hero Section -->
+    <section id="home" class="py-16 md:py-20 fire-bg">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center">
+                <!-- Player Info -->
+                <div class="w-full md:w-1/2 text-center md:text-right">
+                    <h1 class="text-3xl md:text-5xl font-bold mb-4">
+                        <span class="ff-gradient">Mohamed Majdi</span>
+                    </h1>
+                    <div class="mb-6">
+                        <h2 class="text-2xl md:text-4xl font-bold mb-2">
+                            Altaif My Live
+                        </h2>
+                        <p class="text-gray-600 dark:text-gray-400 text-lg mb-4">
+                            لاعب محترف | فريق WOLVES | بطل المسابقة الإقليمية
+                        </p>
+                        
+                        <!-- Player ID Section -->
+                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md inline-block">
+                            <div class="flex flex-col items-start">
+                                <span class="text-gray-600 dark:text-gray-400 text-sm mb-1">رمز اللاعب:</span>
+                                <div class="flex items-center">
+                                    <div id="playerID" class="bg-gray-100 dark:bg-gray-700 px-4 py-2 rounded font-mono text-lg font-bold">
+                                        257349861
+                                    </div>
+                                    <button id="copyBtn" class="mr-2 bg-ff-primary hover:bg-ff-secondary text-white px-3 py-2 rounded transition-colors duration-300">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="mt-4">
+                                    <a href="https://www.facebook.com/player" target="_blank" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                        <svg class="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/>
+                                        </svg>
+                                        حسابي
+                                    </a>
+                                    <a href="https://www.instagram.com/player" target="_blank" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-lg hover:from-purple-700 hover:to-pink-600 transition-colors mr-2">
+                                        <svg class="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/>
+                                        </svg>
+                                        انستغرام
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-center md:justify-end mt-6">
+                        <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg shadow-md">
+                            <div class="grid grid-cols-3 gap-4 text-center">
+                                <div>
+                                    <div class="text-2xl font-bold text-ff-primary">156</div>
+                                    <div class="text-sm text-gray-600 dark:text-gray-400">مباريات</div>
+                                </div>
+                                <div>
+                                    <div class="text-2xl font-bold text-ff-primary">87</div>
+                                    <div class="text-sm text-gray-600 dark:text-gray-400">فوز</div>
+                                </div>
+                                <div>
+                                    <div class="text-2xl font-bold text-ff-primary">2.8</div>
+                                    <div class="text-sm text-gray-600 dark:text-gray-400">K/D</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Player Image -->
+                <div class="w-full md:w-1/2 mt-8 md:mt-0 flex justify-center">
+                    <div class="relative">
+                        <div class="w-72 h-72 md:w-96 md:h-96 bg-gradient-to-r from-ff-primary/10 to-ff-secondary/10 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-pulse"></div>
+                        <div class="flex justify-center items-center float relative">
+                            <!-- Here we're simulating a player character with SVG since we can't load external images -->
+                            <img src="/image/A_STYL_1-removebg-preview.png" alt="">
+                            
+                            <!-- Decorative elements -->
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-ff-primary/20 rounded-full blur-md"></div>
+                            <div class="absolute bottom-0 left-0 w-12 h-12 bg-ff-secondary/20 rounded-full blur-md"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skins Section -->
+    <section id="skins" class="py-16 bg-white dark:bg-gray-900">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold inline-block relative">
+                    <span class="ff-gradient">سكنات</span>
+                    <span class="absolute -top-2 -right-4 w-6 h-6 bg-ff-primary/20 rounded-full"></span>
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400 mt-2">مجموعة السكنات المميزة التي يمتلكها اللاعب</p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Skin 1 -->
+                <div class="skin-card bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                    <div class="h-56 bg-gradient-to-r from-indigo-500 to-purple-500 relative overflow-hidden">
+                        <img src="/image/black_day.png" alt="">
+                        <div class="absolute top-2 left-2 bg-ff-primary text-white text-xs px-2 py-1 rounded">نادر</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-1">اليوم الأسود</h3>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-400 text-sm">المستوى: 3</span>
+                            <span class="bg-yellow-400 text-yellow-900 text-xs px-2 py-1 rounded">مميز</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Skin 2 -->
+                <div class="skin-card bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                    <div class="h-56 bg-gradient-to-r from-red-500 to-pink-500 relative overflow-hidden">
+                        <img src="/image/red_warrier.png" alt="">
+                        <div class="absolute top-2 left-2 bg-ff-primary text-white text-xs px-2 py-1 rounded">نادر</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-1">المحارب الأحمر</h3>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-400 text-sm">المستوى: 5</span>
+                            <span class="bg-yellow-400 text-yellow-900 text-xs px-2 py-1 rounded">مميز</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Skin 3 -->
+                <div class="skin-card bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                    <div class="h-56 bg-gradient-to-r from-green-500 to-teal-500 relative overflow-hidden">
+                        <img src="/image/green_jungle.png" alt="">
+                        <div class="absolute top-2 left-2 bg-ff-primary text-white text-xs px-2 py-1 rounded">عادي</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-1">الغابة الخضراء</h3>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-400 text-sm">المستوى: 2</span>
+                            <span class="bg-blue-400 text-blue-900 text-xs px-2 py-1 rounded">شائع</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Skin 4 -->
+                <div class="skin-card bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                    <div class="h-56 bg-gradient-to-r from-blue-500 to-cyan-500 relative overflow-hidden">
+                        <img src="/image/blue_osan.png" alt="">
+                        <div class="absolute top-2 left-2 bg-ff-primary text-white text-xs px-2 py-1 rounded">نادر جداً</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-1">المحيط الأزرق</h3>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-400 text-sm">المستوى: 6</span>
+                            <span class="bg-purple-400 text-purple-900 text-xs px-2 py-1 rounded">أسطوري</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-8">
+                <button class="bg-ff-primary hover:bg-ff-secondary text-white font-bold py-2 px-6 rounded-full shadow-md hover:shadow-lg transition-all">
+                    عرض المزيد من السكنات
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Weapons Section -->
+    <section id="weapons" class="py-16 bg-gray-100 dark:bg-gray-800">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold inline-block relative">
+                    <span class="ff-gradient">أسلحة</span>
+                    <span class="absolute -top-2 -right-4 w-6 h-6 bg-ff-primary/20 rounded-full"></span>
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400 mt-2">الأسلحة المفضلة والمستخدمة في المعارك</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Weapon 1 -->
+                <div class="weapon-card bg-white dark:bg-gray-900 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow relative">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="font-bold text-xl">AK47</h3>
+                                <span class="text-gray-600 dark:text-gray-400 text-sm">بندقية هجومية</span>
+                            </div>
+                            <div class="bg-ff-primary/10 text-ff-primary px-3 py-1 rounded-full text-sm">قوي</div>
+                        </div>
+                        
+                        <div class="flex justify-center my-6">
+                            <img src="/image/ak47-removebg-preview.png" alt="">
+                        </div>
+                        
+                        <div class="grid grid-cols-3 gap-2 text-center">
+                            <div>
+                                <div class="text-xs text-gray-600 dark:text-gray-400">ضرر</div>
+                                <div class="mt-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
+                                    <div class="h-full bg-red-500 rounded-full" style="width: 80%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-600 dark:text-gray-400">مدى</div>
+                                <div class="mt-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
+                                    <div class="h-full bg-blue-500 rounded-full" style="width: 65%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-600 dark:text-gray-400">سرعة</div>
+                                <div class="mt-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
+                                    <div class="h-full bg-green-500 rounded-full" style="width: 70%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="weapon-details absolute inset-x-0 bottom-0 bg-ff-primary text-white p-3 text-center">
+                        <p class="text-sm">سلاح موثوق به يتميز بقوة نيران عالية ومدى متوسط.</p>
+                    </div>
+                </div>
+                
+                <!-- Weapon 2 -->
+                <div class="weapon-card bg-white dark:bg-gray-900 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow relative">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="font-bold text-xl">AWM</h3>
+                                <span class="text-gray-600 dark:text-gray-400 text-sm">قناص</span>
+                            </div>
+                            <div class="bg-purple-500/10 text-purple-500 px-3 py-1 rounded-full text-sm">أسطوري</div>
+                        </div>
+                        
+                        <div class="flex justify-center my-6">
+                            <img src="/image/awm-removebg-preview.png" alt="">
+                        </div>
+                        
+                        <div class="grid grid-cols-3 gap-2 text-center">
+                            <div>
+                                <div class="text-xs text-gray-600 dark:text-gray-400">ضرر</div>
+                                <div class="mt-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
+                                    <div class="h-full bg-red-500 rounded-full" style="width: 95%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-600 dark:text-gray-400">مدى</div>
+                                <div class="mt-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
+                                    <div class="h-full bg-blue-500 rounded-full" style="width: 90%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-600 dark:text-gray-400">سرعة</div>
+                                <div class="mt-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
+                                    <div class="h-full bg-green-500 rounded-full" style="width: 40%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="weapon-details absolute inset-x-0 bottom-0 bg-ff-primary text-white p-3 text-center">
+                        <p class="text-sm">أقوى سلاح قناص في اللعبة. قادر على القتل بضربة واحدة.</p>
+                    </div>
+                </div>
+                
+                <!-- Weapon 3 -->
+                <div class="weapon-card bg-white dark:bg-gray-900 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow relative">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="font-bold text-xl">MP40</h3>
+                                <span class="text-gray-600 dark:text-gray-400 text-sm">مسدس رشاش</span>
+                            </div>
+                            <div class="bg-blue-500/10 text-blue-500 px-3 py-1 rounded-full text-sm">شائع</div>
+                        </div>
+                        
+                        <div class="flex justify-center my-6">
+                            <img src="/image/mp40-removebg-preview.png" alt="">
+                        </div>
+                        
+                        <div class="grid grid-cols-3 gap-2 text-center">
+                            <div>
+                                <div class="text-xs text-gray-600 dark:text-gray-400">ضرر</div>
+                                <div class="mt-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
+                                    <div class="h-full bg-red-500 rounded-full" style="width: 60%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-600 dark:text-gray-400">مدى</div>
+                                <div class="mt-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
+                                    <div class="h-full bg-blue-500 rounded-full" style="width: 50%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-600 dark:text-gray-400">سرعة</div>
+                                <div class="mt-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
+                                    <div class="h-full bg-green-500 rounded-full" style="width: 85%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="weapon-details absolute inset-x-0 bottom-0 bg-ff-primary text-white p-3 text-center">
+                        <p class="text-sm">سلاح فعال في المسافات القريبة مع معدل إطلاق نار عالي جداً.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-8">
+                <button class="bg-ff-primary hover:bg-ff-secondary text-white font-bold py-2 px-6 rounded-full shadow-md hover:shadow-lg transition-all">
+                    عرض المزيد من الأسلحة
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section id="stats" class="py-16 bg-white dark:bg-gray-900">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold inline-block relative">
+                    <span class="ff-gradient">إحصائيات</span>
+                    <span class="absolute -top-2 -right-4 w-6 h-6 bg-ff-primary/20 rounded-full"></span>
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400 mt-2">احصائيات اللاعب في الموسم الحالي</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Stats Cards -->
+                <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-4 text-center">الإحصائيات العامة</h3>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white dark:bg-gray-700 p-4 rounded-lg">
+                            <div class="flex items-center mb-2">
+                                <svg class="w-5 h-5 text-ff-primary ml-2" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 15.5h-1.5V14h-1v3H8v-3H7v4.5H5.5v-5c0-.55.45-1 1-1H11c.55 0 1 .45 1 1v5zm3.5 0H14v-6h3.5c.55 0 1 .45 1 1V16c0 .55-.45 1-1 1h-2v1.5zm-1-4.5H16v1.5h-1.5V14zM11 5.5v6H9.5V7H8V5.5h3zm5 0v6h-1.5V7H13V5.5h3zm-.5 8.5H17v1.5h-1.5z"/>
+                                </svg>
+                                <span class="font-semibold">المستوى الحالي</span>
+                            </div>
+                            <div class="text-2xl font-bold text-ff-primary">45</div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-700 p-4 rounded-lg">
+                            <div class="flex items-center mb-2">
+                                <svg class="w-5 h-5 text-ff-primary ml-2" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 14.63 21 12.55 21 10V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/>
+                                </svg>
+                                <span class="font-semibold">الرتبة</span>
+                            </div>
+                            <div class="text-2xl font-bold text-ff-primary">ماستر</div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-700 p-4 rounded-lg">
+                            <div class="flex items-center mb-2">
+                                <svg class="w-5 h-5 text-ff-primary ml-2" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M7 11h2v2H7v-2zm14-5v14c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2l.01-14c0-1.1.88-2 1.99-2h1V2h2v2h8V2h2v2h1c1.1 0 2 .9 2 2zM5 8h14V6H5v2zm14 12V10H5v10h14z"/>
+                                </svg>
+                                <span class="font-semibold">أيام اللعب</span>
+                            </div>
+                            <div class="text-2xl font-bold text-ff-primary">365</div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-700 p-4 rounded-lg">
+                            <div class="flex items-center mb-2">
+                                <svg class="w-5 h-5 text-ff-primary ml-2" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                                </svg>
+                                <span class="font-semibold">وقت اللعب</span>
+                            </div>
+                            <div class="text-2xl font-bold text-ff-primary">768 ساعة</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 p-4 bg-white dark:bg-gray-700 rounded-lg">
+                        <h4 class="font-semibold mb-3">معدل النجاة</h4>
+                        <div class="w-full h-6 bg-gray-200 dark:bg-gray-600 rounded-full">
+                            <div class="h-full bg-ff-primary rounded-full" style="width: 75%">
+                                <div class="flex h-full items-center justify-center text-white text-xs">75%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Combat Stats -->
+                <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-4 text-center">إحصائيات القتال</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-white dark:bg-gray-700 p-4 rounded-lg">
+                            <div class="flex justify-between mb-1">
+                                <span class="font-semibold">معدل القتل للوفيات (K/D)</span>
+                                <span class="text-ff-primary font-bold">2.8</span>
+                            </div>
+                            <div class="w-full h-3 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
+                                <div class="h-full bg-ff-primary" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white dark:bg-gray-700 p-4 rounded-lg">
+                            <div class="flex justify-between mb-1">
+                                <span class="font-semibold">نسبة الفوز</span>
+                                <span class="text-ff-primary font-bold">56%</span>
+                            </div>
+                            <div class="w-full h-3 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
+                                <div class="h-full bg-ff-primary" style="width: 56%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white dark:bg-gray-700 p-4 rounded-lg">
+                            <div class="flex justify-between mb-1">
+                                <span class="font-semibold">دقة التصويب</span>
+                                <span class="text-ff-primary font-bold">78%</span>
+                            </div>
+                            <div class="w-full h-3 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
+                                <div class="h-full bg-ff-primary" style="width: 78%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-white dark:bg-gray-700 p-4 rounded-lg text-center">
+                                <div class="text-gray-600 dark:text-gray-400 text-sm mb-1">إجمالي القتل</div>
+                                <div class="text-2xl font-bold text-ff-primary">2,456</div>
+                            </div>
+                            <div class="bg-white dark:bg-gray-700 p-4 rounded-lg text-center">
+                                <div class="text-gray-600 dark:text-gray-400 text-sm mb-1">عدد الفوز</div>
+                                <div class="text-2xl font-bold text-ff-primary">87</div>
+                            </div>
+                            <div class="bg-white dark:bg-gray-700 p-4 rounded-lg text-center">
+                                <div class="text-gray-600 dark:text-gray-400 text-sm mb-1">قتلات الرأس</div>
+                                <div class="text-2xl font-bold text-ff-primary">964</div>
+                            </div>
+                            <div class="bg-white dark:bg-gray-700 p-4 rounded-lg text-center">
+                                <div class="text-gray-600 dark:text-gray-400 text-sm mb-1">أعلى رصيد قتل</div>
+                                <div class="text-2xl font-bold text-ff-primary">18</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center">
+                        <span class="text-xl font-bold ff-gradient">FREE FIRE</span>
+                        <span class="mr-2 text-gray-400">| ملف اللاعب</span>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-6 space-x-reverse">
+                    <a href="#" class="text-gray-400 hover:text-ff-primary transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-ff-primary transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-ff-primary transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.023 10.023 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-ff-primary transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="mt-6 text-center text-gray-500 text-sm">
+                <p>© 2023 جميع الحقوق محفوظة | موقع ملف اللاعب فري فاير</p>
+                <p class="mt-1">Free Fire هي علامة تجارية مسجلة لشركة Garena. هذا الموقع غير تابع لـ Garena.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuIcon = document.getElementById('menuIcon');
+        const closeIcon = document.getElementById('closeIcon');
+        
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            menuIcon.classList.toggle('hidden');
+            closeIcon.classList.toggle('hidden');
+        });
+        
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                menuIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+            });
+        });
+        
+        // Copy ID functionality
+        const copyBtn = document.getElementById('copyBtn');
+        const playerID = document.getElementById('playerID');
+        const copyAlert = document.getElementById('copyAlert');
+        
+        copyBtn.addEventListener('click', () => {
+            // Create a temporary textarea to copy the text
+            const textarea = document.createElement('textarea');
+            textarea.value = playerID.textContent.trim();
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            // Show alert
+            copyAlert.classList.remove('hidden');
+            copyAlert.classList.add('alert-success');
+            
+            // Hide alert after 3 seconds
+            setTimeout(() => {
+                copyAlert.classList.add('hidden');
+                copyAlert.classList.remove('alert-success');
+            }, 3000);
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
